@@ -12,7 +12,6 @@
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans">
 
-  <!-- Navbar -->
   <header class="bg-indigo-900 text-white fixed w-full top-0 z-50 shadow-lg">
     <div class="container mx-auto flex items-center justify-between px-6 py-4">
       <a href="#" class="text-xl font-bold tracking-wide">JC Web Design</a>
@@ -32,7 +31,6 @@
     </div>
   </header>
 
-  <!-- Hero -->
   <section class="pt-32 pb-20 text-center bg-gradient-to-r from-indigo-900 via-indigo-700 to-indigo-900 text-white">
     <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Hi, I'm John Carlo Magallanes</h1>
     <p class="text-lg md:text-xl max-w-2xl mx-auto">Experienced Web Developer specializing in CMS Management (WordPress) with 5+ years of creating elegant and responsive solutions for IT companies and eCommerce businesses.</p>
@@ -41,7 +39,6 @@
     </div>
   </section>
 
-  <!-- About -->
   <section id="about" class="container mx-auto px-6 py-16 text-center">
     <h2 class="text-3xl font-bold text-indigo-900 mb-6">About Me</h2>
     <p class="max-w-3xl mx-auto text-lg text-gray-700 leading-relaxed">
@@ -50,23 +47,49 @@
     </p>
   </section>
 
-  <!-- Stacks -->
-  <section id="stacks" class="bg-gray-100 py-16">
-    <div class="container mx-auto px-6 text-center">
-      <h2 class="text-3xl font-bold text-indigo-900 mb-10">Tech Stacks</h2>
-      <div class="flex flex-wrap justify-center gap-6">
-        <span class="px-6 py-3 bg-white shadow rounded-lg font-semibold text-indigo-800">ReactJS</span>
-        <span class="px-6 py-3 bg-white shadow rounded-lg font-semibold text-indigo-800">TypeScript</span>
-        <span class="px-6 py-3 bg-white shadow rounded-lg font-semibold text-indigo-800">JavaScript</span>
-        <span class="px-6 py-3 bg-white shadow rounded-lg font-semibold text-indigo-800">Liquid</span>
-        <span class="px-6 py-3 bg-white shadow rounded-lg font-semibold text-indigo-800">Next.js</span>
-        <span class="px-6 py-3 bg-white shadow rounded-lg font-semibold text-indigo-800">Webflow</span>
-        <span class="px-6 py-3 bg-white shadow rounded-lg font-semibold text-indigo-800">WordPress</span>
+<section class="py-16 bg-gray-50">
+  <div class="max-w-6xl mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center mb-10">Tech Stacks</h2>
+    <div class="swiper techSwiper">
+      <div class="swiper-wrapper flex items-center">
+        <div class="swiper-slide flex justify-center">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" class="w-16 h-16" alt="HTML">
+        </div>
+        <div class="swiper-slide flex justify-center">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" class="w-16 h-16" alt="CSS">
+        </div>
+        <div class="swiper-slide flex justify-center">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" class="w-16 h-16" alt="JavaScript">
+        </div>
+        <div class="swiper-slide flex justify-center">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" class="w-16 h-16" alt="TypeScript">
+        </div>
+        <div class="swiper-slide flex justify-center">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" class="w-16 h-16" alt="React">
+        </div>
+        <div class="swiper-slide flex justify-center">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" class="w-16 h-16 bg-white rounded" alt="Next.js">
+        </div>
+        <div class="swiper-slide flex justify-center">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg" class="w-16 h-16" alt="PHP">
+        </div>
+        <div class="swiper-slide flex justify-center">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-plain.svg" class="w-16 h-16" alt="Laravel">
+        </div>
+        <div class="swiper-slide flex justify-center">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" class="w-16 h-16" alt="Node.js">
+        </div>
+        <div class="swiper-slide flex justify-center">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/webflow/webflow-original.svg" class="w-16 h-16" alt="Webflow">
+        </div>
+        <div class="swiper-slide flex justify-center">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/shopify/shopify-original.svg" class="w-16 h-16" alt="Liquid / Shopify">
+        </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Portfolio Swiper -->
   <section id="portfolio" class="py-16">
     <div class="container mx-auto px-6">
       <h2 class="text-3xl font-bold text-indigo-900 text-center mb-12">Portfolio</h2>
@@ -74,7 +97,6 @@
       <div class="swiper mySwiper">
         <div class="swiper-wrapper">
 
-          <!-- Project Card -->
           <div class="swiper-slide bg-white rounded-xl shadow overflow-hidden">
             <a href="http://homewiseinnovations.com/" target="_blank">
               <img src="images/homewise.png" alt="Homewise Innovations" class="w-full h-56 object-cover">
@@ -105,17 +127,13 @@
             </a>
           </div>
 
-          <!-- Continue adding your other portfolio projects here... -->
-
         </div>
 
-        <!-- Swiper controls -->
         <div class="swiper-pagination mt-6"></div>
         <div class="swiper-button-next"></div>
         <div class="swiper-button-prev"></div>
       </div>
 
-      <!-- Portfolio PDF Viewer -->
       <div class="mt-16 text-center">
         <h3 class="text-2xl font-bold text-indigo-900 mb-4">View My Portfolio as PDF</h3>
         <iframe src="Web Designer - John Carlo Magallanes.pdf" class="w-full h-96 border-2 border-indigo-200 rounded-lg shadow"></iframe>
@@ -123,7 +141,6 @@
     </div>
   </section>
 
-  <!-- Contact -->
   <section id="contact" class="container mx-auto px-6 py-16">
     <h2 class="text-3xl font-bold text-indigo-900 text-center mb-6">Get In Touch</h2>
     <form action="https://formspree.io/f/mdoylyeo" method="POST" class="max-w-lg mx-auto bg-white p-8 rounded-xl shadow">
@@ -133,7 +150,6 @@
     </form>
   </section>
 
-  <!-- Footer -->
   <footer class="bg-indigo-900 text-gray-200 py-8">
     <div class="container mx-auto px-6 text-center">
       <p>&copy; 2025 JC Web Design Services. All Rights Reserved.</p>
@@ -145,7 +161,6 @@
     </div>
   </footer>
 
-  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script>
     const menuBtn = document.getElementById('menu-btn');
