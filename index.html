@@ -5,15 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Experienced Web Developer | John Carlo Magallanes</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+  />
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans">
 
-  <!-- Header / Navbar -->
+  <!-- Navbar -->
   <header class="bg-indigo-900 text-white fixed w-full top-0 z-50 shadow-lg">
     <div class="container mx-auto flex items-center justify-between px-6 py-4">
       <a href="#" class="text-xl font-bold tracking-wide">JC Web Design</a>
       <nav class="hidden md:flex space-x-6">
         <a href="#about" class="hover:text-indigo-300">About</a>
+        <a href="#stacks" class="hover:text-indigo-300">Stacks</a>
         <a href="#portfolio" class="hover:text-indigo-300">Portfolio</a>
         <a href="#contact" class="hover:text-indigo-300">Contact</a>
       </nav>
@@ -21,12 +26,13 @@
     </div>
     <div id="mobile-menu" class="hidden flex-col bg-indigo-800 md:hidden">
       <a href="#about" class="py-2 px-6 hover:bg-indigo-700">About</a>
+      <a href="#stacks" class="py-2 px-6 hover:bg-indigo-700">Stacks</a>
       <a href="#portfolio" class="py-2 px-6 hover:bg-indigo-700">Portfolio</a>
       <a href="#contact" class="py-2 px-6 hover:bg-indigo-700">Contact</a>
     </div>
   </header>
 
-  <!-- Hero Section -->
+  <!-- Hero -->
   <section class="pt-32 pb-20 text-center bg-gradient-to-r from-indigo-900 via-indigo-700 to-indigo-900 text-white">
     <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Hi, I'm John Carlo Magallanes</h1>
     <p class="text-lg md:text-xl max-w-2xl mx-auto">Experienced Web Developer specializing in CMS Management (WordPress) with 5+ years of creating elegant and responsive solutions for IT companies and eCommerce businesses.</p>
@@ -44,48 +50,69 @@
     </p>
   </section>
 
-  <!-- Portfolio -->
-  <section id="portfolio" class="bg-gray-100 py-16">
+  <!-- Stacks -->
+  <section id="stacks" class="bg-gray-100 py-16">
+    <div class="container mx-auto px-6 text-center">
+      <h2 class="text-3xl font-bold text-indigo-900 mb-10">Tech Stacks</h2>
+      <div class="flex flex-wrap justify-center gap-6">
+        <span class="px-6 py-3 bg-white shadow rounded-lg font-semibold text-indigo-800">ReactJS</span>
+        <span class="px-6 py-3 bg-white shadow rounded-lg font-semibold text-indigo-800">TypeScript</span>
+        <span class="px-6 py-3 bg-white shadow rounded-lg font-semibold text-indigo-800">JavaScript</span>
+        <span class="px-6 py-3 bg-white shadow rounded-lg font-semibold text-indigo-800">Liquid</span>
+        <span class="px-6 py-3 bg-white shadow rounded-lg font-semibold text-indigo-800">Next.js</span>
+        <span class="px-6 py-3 bg-white shadow rounded-lg font-semibold text-indigo-800">Webflow</span>
+        <span class="px-6 py-3 bg-white shadow rounded-lg font-semibold text-indigo-800">WordPress</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Portfolio Swiper -->
+  <section id="portfolio" class="py-16">
     <div class="container mx-auto px-6">
       <h2 class="text-3xl font-bold text-indigo-900 text-center mb-12">Portfolio</h2>
-      <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-        
-        <!-- Example Project Card -->
-        <div class="bg-white rounded-xl shadow hover:shadow-lg overflow-hidden">
-          <a href="http://homewiseinnovations.com/" target="_blank">
-            <img src="images/homewise.png" alt="Homewise Innovations" class="w-full h-48 object-cover">
-            <div class="p-4">
-              <h3 class="text-xl font-semibold text-indigo-800 mb-2">Homewise Innovations</h3>
-              <p class="text-gray-600">Set up cPanel, optimized server, installed WordPress, and launched their website.</p>
-            </div>
-          </a>
+
+      <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+
+          <!-- Project Card -->
+          <div class="swiper-slide bg-white rounded-xl shadow overflow-hidden">
+            <a href="http://homewiseinnovations.com/" target="_blank">
+              <img src="images/homewise.png" alt="Homewise Innovations" class="w-full h-56 object-cover">
+              <div class="p-4">
+                <h3 class="text-xl font-semibold text-indigo-800 mb-2">Homewise Innovations</h3>
+                <p class="text-gray-600">Set up cPanel, optimized server, installed WordPress, and launched their website.</p>
+              </div>
+            </a>
+          </div>
+
+          <div class="swiper-slide bg-white rounded-xl shadow overflow-hidden">
+            <a href="https://tamakvirtual.com/" target="_blank">
+              <img src="images/tamak.png" alt="Tamak Virtual" class="w-full h-56 object-cover">
+              <div class="p-4">
+                <h3 class="text-xl font-semibold text-indigo-800 mb-2">Tamak Virtual</h3>
+                <p class="text-gray-600">Created responsive front-end and landing pages with modern UI design.</p>
+              </div>
+            </a>
+          </div>
+
+          <div class="swiper-slide bg-white rounded-xl shadow overflow-hidden">
+            <a href="https://justicemedia.com.au/" target="_blank">
+              <img src="images/justicemedia.png" alt="Justice Media AU" class="w-full h-56 object-cover">
+              <div class="p-4">
+                <h3 class="text-xl font-semibold text-indigo-800 mb-2">Justice Media</h3>
+                <p class="text-gray-600">Redesigned layout, updated typography, colors, and content improvements.</p>
+              </div>
+            </a>
+          </div>
+
+          <!-- Continue adding your other portfolio projects here... -->
+
         </div>
 
-        <!-- Repeat project cards... -->
-        <!-- Tamak Virtual -->
-        <div class="bg-white rounded-xl shadow hover:shadow-lg overflow-hidden">
-          <a href="https://tamakvirtual.com/" target="_blank">
-            <img src="images/tamak.png" alt="Tamak Virtual" class="w-full h-48 object-cover">
-            <div class="p-4">
-              <h3 class="text-xl font-semibold text-indigo-800 mb-2">Tamak Virtual</h3>
-              <p class="text-gray-600">Created responsive front-end and landing pages with modern UI design.</p>
-            </div>
-          </a>
-        </div>
-
-        <!-- Justice Media -->
-        <div class="bg-white rounded-xl shadow hover:shadow-lg overflow-hidden">
-          <a href="https://justicemedia.com.au/" target="_blank">
-            <img src="images/justicemedia.png" alt="Justice Media AU" class="w-full h-48 object-cover">
-            <div class="p-4">
-              <h3 class="text-xl font-semibold text-indigo-800 mb-2">Justice Media</h3>
-              <p class="text-gray-600">Redesigned layout, updated typography, colors, and content improvements.</p>
-            </div>
-          </a>
-        </div>
-
-        <!-- Continue with other projects... -->
-
+        <!-- Swiper controls -->
+        <div class="swiper-pagination mt-6"></div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
       </div>
 
       <!-- Portfolio PDF Viewer -->
@@ -118,11 +145,31 @@
     </div>
   </footer>
 
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script>
     const menuBtn = document.getElementById('menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
     menuBtn.addEventListener('click', () => {
       mobileMenu.classList.toggle('hidden');
+    });
+
+    const swiper = new Swiper(".mySwiper", {
+      slidesPerView: 1,
+      spaceBetween: 20,
+      loop: true,
+      pagination: {
+        el: ".swiper-pagination",
+        clickable: true,
+      },
+      navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+      },
+      breakpoints: {
+        768: { slidesPerView: 2 },
+        1024: { slidesPerView: 3 }
+      }
     });
   </script>
 
