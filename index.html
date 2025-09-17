@@ -90,6 +90,59 @@
   </div>
 </section>
 
+<section class="py-16 bg-gray-50">
+  <div class="max-w-6xl mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center mb-10">Work Experience</h2>
+    <div class="swiper workSwiper">
+      <div class="swiper-wrapper">
+
+        <div class="swiper-slide bg-white shadow rounded-xl p-6">
+          <h3 class="text-xl font-semibold mb-2">Web Developer | Supervisor</h3>
+          <p class="text-gray-600">Rooche Digital | Nov 2023 - Present</p>
+          <ul class="list-disc list-inside text-gray-700 mt-3 space-y-1">
+            <li>Conduct project coordination, planning, and implementation across multiple teams</li>
+            <li>Designed templates for CMS and business websites</li>
+            <li>Email management and answering queries on Support.ink</li>
+            <li>Troubleshot Magento 2 software and developed custom functions</li>
+            <li>Improved software CWV</li>
+            <li>WordPress plugin development for Australian apparel stores</li>
+            <li>Built Shopify pages using Liquid and optimized snippets</li>
+            <li>Developed components for Next.js projects with TypeScript + Laravel backend</li>
+          </ul>
+        </div>
+
+        <div class="swiper-slide bg-white shadow rounded-xl p-6">
+          <h3 class="text-xl font-semibold mb-2">Web Designer, Digital Marketer</h3>
+          <p class="text-gray-600">Virtual F1 | May 2022 - Oct 2023</p>
+          <ul class="list-disc list-inside text-gray-700 mt-3 space-y-1">
+            <li>Managed websites and improved SEO rankings</li>
+            <li>Collaborated with designers for high-quality websites</li>
+            <li>Led team to produce responsive and elegant websites</li>
+          </ul>
+        </div>
+
+        <div class="swiper-slide bg-white shadow rounded-xl p-6">
+          <h3 class="text-xl font-semibold mb-2">Web Designer</h3>
+          <p class="text-gray-600">Steven Elia Realty | Jul 2021 - Mar 2022</p>
+          <ul class="list-disc list-inside text-gray-700 mt-3 space-y-1">
+            <li>Managed business websites (WordPress)</li>
+            <li>Handled core web vitals optimization and plugin maintenance</li>
+          </ul>
+        </div>
+
+        <div class="swiper-slide bg-white shadow rounded-xl p-6">
+          <h3 class="text-xl font-semibold mb-2">Frontend Developer</h3>
+          <p class="text-gray-600">Joe the Goat Farmer | Apr 2020 - Sep 2020</p>
+          <ul class="list-disc list-inside text-gray-700 mt-3 space-y-1">
+            <li>Developed frontend features and maintained business websites</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
   <section id="portfolio" class="py-16">
     <div class="container mx-auto px-6">
       <h2 class="text-3xl font-bold text-indigo-900 text-center mb-12">Portfolio</h2>
@@ -187,6 +240,39 @@
       }
     });
   </script>
+
+<script>
+  var techSwiper = new Swiper(".techSwiper", {
+    slidesPerView: 5,
+    spaceBetween: 20,
+    loop: true,
+    autoplay: {
+      delay: 2000,
+      disableOnInteraction: false,
+    },
+    breakpoints: {
+      320: { slidesPerView: 3 },
+      640: { slidesPerView: 4 },
+      1024: { slidesPerView: 6 },
+    }
+  });
+</script>
+
+<script>
+  var workSwiper = new Swiper(".workSwiper", {
+    slidesPerView: 1,
+    spaceBetween: 20,
+    loop: true,
+    autoplay: {
+      delay: 4000,
+      disableOnInteraction: false,
+    },
+    breakpoints: {
+      640: { slidesPerView: 2 },
+      1024: { slidesPerView: 3 },
+    }
+  });
+</script>
 
 </body>
 </html>
