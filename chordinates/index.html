@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Song Organizer</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- SortableJS (for drag-and-drop) -->
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-orange-200 to-amber-300 flex flex-col items-center p-6">
+
+  <h1 class="text-3xl font-bold text-white mb-6">🎵 Song Organizer</h1>
+
+  <div class="bg-white p-4 rounded-2xl shadow-md w-full max-w-md space-y-3">
+    <input id="title" type="text" placeholder="Song title" class="w-full border p-2 rounded" />
+    <input id="chords" type="text" placeholder="Chords (e.g. G - D - Em - C)" class="w-full border p-2 rounded" />
+    <input id="link" type="text" placeholder="YouTube or reference link" class="w-full border p-2 rounded" />
+
+    <button id="addBtn" class="w-full bg-amber-500 text-white font-medium p-2 rounded hover:bg-amber-600 transition">
+      ➕ Add Song
+    </button>
+  </div>
+
+  <div id="songList" class="mt-6 w-full max-w-md space-y-4"></div>
+
+  <script>
+    const titleInput = document.getElementById("title");
+    const chordsInput = document.getElementById("chords");
+    const linkInput = document.getElementById("link");
+    const addBtn = document.getElementById("addBtn");
+    const songList = document.getElementById("songList");
+
+    addBtn.addEventListener("click", () => {
+      const title = titleInput.value.trim();
+      const chords = chordsInput.value.trim();
+      const link = linkInput.value.trim();
+
+      if (!title) {
+        alert("Please enter a song title");
+        return;
+      }
+
+      const card = document.createElement("div");
+      card.className = "bg-white rounded-2xl shadow-md p-4 flex flex-col sm:flex-row sm:justify-between cursor-move";
+      card.innerHTML = `
+        <div>
+          <h2 class="font-semibold text-lg">${title}</h2>
+          ${link ? `<a href="${link}" target="_blank" class="text-blue-500 text-sm underline break-all">${link}</a>` : ""}
+        </div>
+        <div class="text-right text-amber-600 font-mono mt-2 sm:mt-0">${chords}</div>
+      `;
+
+      songList.appendChild(card);
+
+      // clear inputs
+      titleInput.value = "";
+      chordsInput.value = "";
+      linkInput.value = "";
+    });
+
+    // Enable drag-and-drop sorting
+    new Sortable(songList, {
+      animation: 150,
+      ghostClass: "bg-amber-100",
+    });
+  </script>
+</body>
+</html>
