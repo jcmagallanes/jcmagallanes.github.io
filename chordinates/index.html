@@ -1,184 +1,161 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" x-data="chordinatesApp()" x-init="init()">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Chordinates 🎶</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+  <style>
+    /* Custom colors */
+    .primary { background-color: #119DA4; color: white; }
+    .primary:hover { background-color: #0C7489; }
+    .secondary { background-color: #13505B; color: white; }
+    .text-dark { color: #040404; }
+    .bg-light { background-color: #D7D9CE; }
+  </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center p-4">
+<body class="bg-gray-100 flex flex-col items-center p-4 min-h-screen">
 
-  <div class="w-full max-w-3xl bg-white rounded-2xl shadow-lg p-6 mt-6">
-    <h1 class="text-2xl font-bold text-center text-amber-600 mb-6">Chordinates 🎵</h1>
+  <div class="w-full max-w-3xl bg-light rounded-2xl shadow-lg p-6 mt-6 flex flex-col">
+    <h1 class="text-2xl font-bold text-center text-dark mb-6">Chordinates 🎵</h1>
 
     <div class="flex flex-col md:flex-row gap-3 mb-4">
-      <input id="songTitle" type="text" placeholder="Song title" class="flex-1 border border-gray-300 rounded-lg p-2" />
-      <input id="songChord" type="text" placeholder="Chord" class="flex-1 border border-gray-300 rounded-lg p-2" />
-      <input id="songLink" type="url" placeholder="Reference link (YouTube, Spotify, Vimeo, etc)" class="flex-1 border border-gray-300 rounded-lg p-2" />
+      <input x-model="newSong.title" type="text" placeholder="Song title" class="flex-1 border border-gray-300 rounded-lg p-2" />
+      <input x-model="newSong.chord" type="text" placeholder="Chord" class="flex-1 border border-gray-300 rounded-lg p-2" />
+      <input x-model="newSong.link" type="url" placeholder="Reference link / YouTube / Spotify / Vimeo" class="flex-1 border border-gray-300 rounded-lg p-2" />
     </div>
 
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex justify-between items-center mb-4">
       <label class="flex items-center space-x-2">
-        <input id="saveForever" type="checkbox" class="accent-amber-600">
-        <span class="text-sm text-gray-600">Save Forever (no expiration)</span>
+        <input type="checkbox" x-model="newSong.saveForever" class="accent-primary">
+        <span class="text-sm text-dark">Save Forever</span>
       </label>
-      <button id="addSong" class="bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-700">Add Song</button>
+      <button @click="addSong()" class="primary px-4 py-2 rounded-lg hover:bg-secondary">Add Song</button>
     </div>
 
-    <div id="songList" class="space-y-3"></div>
+    <div class="flex justify-between mb-4">
+      <button @click="generateLink()" class="primary px-4 py-2 rounded-lg hover:bg-secondary">Generate Share Link</button>
+      <a :href="shareLink" target="_blank" x-show="shareLink" class="text-dark underline text-sm">View Lineup Link</a>
+    </div>
 
-    <button id="clearSongs" class="mt-6 bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400">
-      Clear All Songs
-    </button>
+    <div id="songList" class="space-y-3 overflow-y-auto max-h-[60vh]"></div>
+
+    <button @click="clearSongs()" class="mt-6 bg-gray-400 text-dark px-4 py-2 rounded-lg hover:bg-gray-500">Clear All Songs</button>
   </div>
 
   <script>
-    const STORAGE_KEY = 'chordnotes_data'
-    const EXPIRATION_HOURS = 24
-
-    function setWithExpiry(key, value, ttlHours) {
-      const now = new Date()
-      const item = {
-        value: value,
-        expiry: now.getTime() + ttlHours * 60 * 60 * 1000
-      }
-      localStorage.setItem(key, JSON.stringify(item))
+    function chordinateEmbed(url) {
+      if (!url) return '';
+      const youtube = url.match(/(?:youtube\.com.*v=|youtu\.be\/)([a-zA-Z0-9_-]+)/)
+      if (youtube) return `<button class="togglePlayer bg-gray-300 px-2 py-1 rounded mb-2 text-xs">Show Player</button><iframe class="rounded-lg w-full mt-2 hidden" height="200" src="https://www.youtube.com/embed/${youtube[1]}" frameborder="0" allowfullscreen></iframe>`;
+      const vimeo = url.match(/vimeo\.com\/(\d+)/)
+      if (vimeo) return `<button class="togglePlayer bg-gray-300 px-2 py-1 rounded mb-2 text-xs">Show Player</button><iframe class="rounded-lg w-full mt-2 hidden" height="200" src="https://player.vimeo.com/video/${vimeo[1]}" frameborder="0" allowfullscreen></iframe>`;
+      const spotify = url.match(/open\.spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/)
+      if (spotify) return `<button class="togglePlayer bg-gray-300 px-2 py-1 rounded mb-2 text-xs">Show Player</button><iframe class="rounded-lg w-full mt-2 hidden" height="152" src="https://open.spotify.com/embed/${spotify[1]}/${spotify[2]}" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`;
+      return `<a href="${url}" target="_blank" class="text-dark underline text-sm">Reference Link</a>`;
     }
 
-    function getWithExpiry(key) {
-      const itemStr = localStorage.getItem(key)
-      if (!itemStr) return null
-      const item = JSON.parse(itemStr)
-      const now = new Date()
-      if (now.getTime() > item.expiry && !item.value.some(s => s.saveForever)) {
-        localStorage.removeItem(key)
-        return null
-      }
-      return item.value
-    }
+    function chordnotesApp() {
+      return {
+        songs: [],
+        newSong: { title: '', chord: '', link: '', saveForever: false, notes: [] },
+        shareLink: '',
+        STORAGE_KEY: 'chordnotes_data',
+        EXPIRATION_HOURS: 24,
 
-    let songs = getWithExpiry(STORAGE_KEY) || []
-    renderSongs(songs)
+        init() {
+          const stored = localStorage.getItem(this.STORAGE_KEY)
+          if (stored) {
+            try {
+              const parsed = JSON.parse(stored)
+              const now = new Date()
+              this.songs = parsed.filter(s => s.saveForever || now.getTime() < s.expiry)
+            } catch(e) {}
+          }
 
-    function saveSongs() {
-      setWithExpiry(STORAGE_KEY, songs, EXPIRATION_HOURS)
-    }
+          // Check URL share data
+          const params = new URLSearchParams(window.location.search)
+          if (params.get('data')) {
+            try {
+              const shared = JSON.parse(decodeURIComponent(params.get('data')))
+              if (Array.isArray(shared)) this.songs = shared
+            } catch(e) {}
+          }
 
-    document.getElementById('addSong').addEventListener('click', () => {
-      const title = document.getElementById('songTitle').value.trim()
-      const chord = document.getElementById('songChord').value.trim()
-      const link = document.getElementById('songLink').value.trim()
-      const saveForever = document.getElementById('saveForever').checked
+          this.renderSongs()
 
-      if (!title || !chord) return alert('Please enter both title and chord.')
+          new Sortable(document.getElementById('songList'), {
+            animation: 150,
+            onEnd: () => {
+              const reordered = Array.from(document.querySelectorAll('#songList > div')).map(div => this.songs[div.dataset.index])
+              this.songs = reordered
+              this.saveSongs()
+              this.renderSongs()
+            }
+          })
+        },
 
-      songs.push({ title, chord, link, saveForever, notes: [] })
-      saveSongs()
-      renderSongs(songs)
+        saveSongs() {
+          const now = new Date()
+          const stored = this.songs.map(s => ({ ...s, expiry: now.getTime() + this.EXPIRATION_HOURS * 60 * 60 * 1000 }))
+          localStorage.setItem(this.STORAGE_KEY, JSON.stringify(stored))
+        },
 
-      document.getElementById('songTitle').value = ''
-      document.getElementById('songChord').value = ''
-      document.getElementById('songLink').value = ''
-      document.getElementById('saveForever').checked = false
-    })
+        addSong() {
+          if (!this.newSong.title || !this.newSong.chord) return alert('Enter title & chord.')
+          this.songs.push({ ...this.newSong, notes: [] })
+          this.saveSongs()
+          this.renderSongs()
+          this.newSong = { title: '', chord: '', link: '', saveForever: false, notes: [] }
+        },
 
-    document.getElementById('clearSongs').addEventListener('click', () => {
-      if (confirm('Clear all songs?')) {
-        songs = []
-        saveSongs()
-        renderSongs(songs)
-      }
-    })
+        clearSongs() {
+          if (!confirm('Clear all songs?')) return
+          this.songs = []
+          this.saveSongs()
+          this.renderSongs()
+        },
 
-    function getEmbedHTML(url) {
-      if (!url) return ''
-      const youtubeMatch = url.match(/(?:youtube\.com.*v=|youtu\.be\/)([a-zA-Z0-9_-]+)/)
-      if (youtubeMatch) {
-        return `<iframe class="rounded-lg w-full mt-2" height="200" src="https://www.youtube.com/embed/${youtubeMatch[1]}" frameborder="0" allowfullscreen></iframe>`
-      }
+        renderSongs() {
+          const list = document.getElementById('songList')
+          list.innerHTML = ''
+          this.songs.forEach((song, index) => {
+            const div = document.createElement('div')
+            div.className = 'bg-primary/10 border border-primary rounded-lg p-4'
+            div.dataset.index = index
+            div.innerHTML = `
+              <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                <div class="flex-1">
+                  <div class="flex justify-between items-center mb-1">
+                    <h3 class="font-semibold text-dark text-lg">${song.title}</h3>
+                    <button class="editSong bg-secondary px-2 py-1 rounded text-xs text-white">Edit</button>
+                  </div>
+                  <p class="text-dark text-sm">Chord: <span class="font-medium">${song.chord}</span></p>
+                  ${chordinateEmbed(song.link)}
+                  ${song.saveForever ? '<p class="text-xs text-green-600 mt-1">Saved Forever</p>' : ''}
+                  <div class="notes mt-2 space-y-1">
+                    ${song.notes.map((note,i) => `<div class="flex justify-between bg-white border rounded-lg p-1">
+                      <input value="${note}" class="text-sm w-full border-none focus:ring-0 focus:border-0" data-note="${i}" />
+                      <button class="deleteNote text-red-500 text-xs px-1">✕</button>
+                    </div>`).join('')}
+                  </div>
+                  <button class="addNote bg-primary px-3 py-1 mt-2 rounded-lg text-white text-xs">Add Note</button>
+                </div>
+                <button class="delete bg-red-500 text-white px-3 py-1 rounded-lg mt-2 md:mt-0">Delete</button>
+              </div>`
+            list.appendChild(div)
+          })
+        },
 
-      const vimeoMatch = url.match(/vimeo\.com\/(\d+)/)
-      if (vimeoMatch) {
-        return `<iframe class="rounded-lg w-full mt-2" height="200" src="https://player.vimeo.com/video/${vimeoMatch[1]}" frameborder="0" allowfullscreen></iframe>`
-      }
-
-      const spotifyMatch = url.match(/open\.spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/)
-      if (spotifyMatch) {
-        return `<iframe class="rounded-lg w-full mt-2" height="152" src="https://open.spotify.com/embed/${spotifyMatch[1]}/${spotifyMatch[2]}" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`
-      }
-
-      return `<a href="${url}" target="_blank" class="text-amber-600 underline text-sm">Reference Link</a>`
-    }
-
-    function renderSongs(songs) {
-      const list = document.getElementById('songList')
-      list.innerHTML = ''
-      songs.forEach((song, index) => {
-        const div = document.createElement('div')
-        div.className = 'bg-amber-50 border border-amber-200 rounded-lg p-4'
-        div.dataset.index = index
-        div.innerHTML = `
-          <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
-            <div>
-              <h3 class="font-semibold text-lg">${song.title}</h3>
-              <p class="text-sm text-gray-600">Chord: <span class="font-medium">${song.chord}</span></p>
-              ${getEmbedHTML(song.link)}
-              ${song.saveForever ? '<p class="text-xs text-green-600 mt-1">Saved Forever</p>' : ''}
-            </div>
-            <div class="flex gap-2 mt-2 md:mt-0">
-              <button class="addNote bg-amber-600 text-white px-3 py-1 rounded-lg">Add Note</button>
-              <button class="delete bg-red-500 text-white px-3 py-1 rounded-lg">Delete</button>
-            </div>
-          </div>
-          <div class="notes mt-3 space-y-2">
-            ${song.notes.map((note, i) => `
-              <div class="flex justify-between bg-white border rounded-lg p-2">
-                <p class="text-sm text-gray-700">${note}</p>
-                <button class="deleteNote text-red-500 text-xs" data-note="${i}">✕</button>
-              </div>
-            `).join('')}
-          </div>
-        `
-        list.appendChild(div)
-      })
-    }
-
-    document.getElementById('songList').addEventListener('click', e => {
-      const index = e.target.closest('[data-index]')?.dataset.index
-      if (e.target.classList.contains('delete')) {
-        songs.splice(index, 1)
-        saveSongs()
-        renderSongs(songs)
-      }
-      if (e.target.classList.contains('addNote')) {
-        const note = prompt('Enter a note for this song:')
-        if (note) {
-          songs[index].notes.push(note)
-          saveSongs()
-          renderSongs(songs)
+        generateLink() {
+          const encoded = encodeURIComponent(JSON.stringify(this.songs))
+          this.shareLink = `${window.location.origin}${window.location.pathname}?data=${encoded}`
+          navigator.clipboard.writeText(this.shareLink).then(() => alert('Share link copied!'))
         }
       }
-      if (e.target.classList.contains('deleteNote')) {
-        const noteIndex = e.target.dataset.note
-        songs[index].notes.splice(noteIndex, 1)
-        saveSongs()
-        renderSongs(songs)
-      }
-    })
-
-    new Sortable(document.getElementById('songList'), {
-      animation: 150,
-      onEnd: () => {
-        const reordered = Array.from(document.querySelectorAll('#songList > div')).map(div => {
-          const index = div.dataset.index
-          return songs[index]
-        })
-        songs = reordered
-        saveSongs()
-        renderSongs(songs)
-      }
-    })
+    }
   </script>
 </body>
 </html>
