@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ChordNotes 🎶</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chordinates 🎶</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col items-center p-4">
 
   <div class="w-full max-w-3xl bg-white rounded-2xl shadow-lg p-6 mt-6">
-    <h1 class="text-2xl font-bold text-center text-amber-600 mb-6">ChordNotes 🎵</h1>
+    <h1 class="text-2xl font-bold text-center text-amber-600 mb-6">Chordinates 🎵</h1>
 
     <div class="flex flex-col md:flex-row gap-3 mb-4">
       <input id="songTitle" type="text" placeholder="Song title" class="flex-1 border border-gray-300 rounded-lg p-2" />
       <input id="songChord" type="text" placeholder="Chord" class="flex-1 border border-gray-300 rounded-lg p-2" />
-      <input id="songLink" type="url" placeholder="Reference link / YouTube" class="flex-1 border border-gray-300 rounded-lg p-2" />
+      <input id="songLink" type="url" placeholder="Reference link (YouTube, Spotify, Vimeo, etc)" class="flex-1 border border-gray-300 rounded-lg p-2" />
     </div>
 
     <div class="flex justify-between items-center mb-6">
@@ -91,6 +91,26 @@
       }
     })
 
+    function getEmbedHTML(url) {
+      if (!url) return ''
+      const youtubeMatch = url.match(/(?:youtube\.com.*v=|youtu\.be\/)([a-zA-Z0-9_-]+)/)
+      if (youtubeMatch) {
+        return `<iframe class="rounded-lg w-full mt-2" height="200" src="https://www.youtube.com/embed/${youtubeMatch[1]}" frameborder="0" allowfullscreen></iframe>`
+      }
+
+      const vimeoMatch = url.match(/vimeo\.com\/(\d+)/)
+      if (vimeoMatch) {
+        return `<iframe class="rounded-lg w-full mt-2" height="200" src="https://player.vimeo.com/video/${vimeoMatch[1]}" frameborder="0" allowfullscreen></iframe>`
+      }
+
+      const spotifyMatch = url.match(/open\.spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/)
+      if (spotifyMatch) {
+        return `<iframe class="rounded-lg w-full mt-2" height="152" src="https://open.spotify.com/embed/${spotifyMatch[1]}/${spotifyMatch[2]}" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`
+      }
+
+      return `<a href="${url}" target="_blank" class="text-amber-600 underline text-sm">Reference Link</a>`
+    }
+
     function renderSongs(songs) {
       const list = document.getElementById('songList')
       list.innerHTML = ''
@@ -103,7 +123,7 @@
             <div>
               <h3 class="font-semibold text-lg">${song.title}</h3>
               <p class="text-sm text-gray-600">Chord: <span class="font-medium">${song.chord}</span></p>
-              <a href="${song.link}" target="_blank" class="text-amber-600 underline text-sm">${song.link ? 'Reference' : ''}</a>
+              ${getEmbedHTML(song.link)}
               ${song.saveForever ? '<p class="text-xs text-green-600 mt-1">Saved Forever</p>' : ''}
             </div>
             <div class="flex gap-2 mt-2 md:mt-0">
