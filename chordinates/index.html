@@ -1,138 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Song Organizer</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChordNotes 🎶</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, query, where, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyC8oTn51XzmQ7l0OBEmqVQJ7UEzpWm4hUA",
-      authDomain: "chordinates.firebaseapp.com",
-      projectId: "chordinates",
-      storageBucket: "chordinates.firebasestorage.app",
-      messagingSenderId: "322241546938",
-      appId: "1:322241546938:web:5bf171bbe4ee7e1c3d1083",
-      measurementId: "G-1SLZJ4Y71S"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    let currentUser = null;
-
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        currentUser = user;
-        document.getElementById("loginSection").classList.add("hidden");
-        document.getElementById("appSection").classList.remove("hidden");
-        loadSongs();
-      } else {
-        document.getElementById("loginSection").classList.remove("hidden");
-        document.getElementById("appSection").classList.add("hidden");
-      }
-    });
-
-    async function signUp() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      await createUserWithEmailAndPassword(auth, email, password);
-    }
-
-    async function login() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      await signInWithEmailAndPassword(auth, email, password);
-    }
-
-    async function logout() {
-      await signOut(auth);
-    }
-
-    async function addSong() {
-      const title = document.getElementById("songTitle").value;
-      const chords = document.getElementById("songChords").value;
-      const ref = document.getElementById("songRef").value;
-
-      if (!title) return alert("Add a title");
-
-      await addDoc(collection(db, "songs"), {
-        uid: currentUser.uid,
-        title,
-        chords,
-        ref
-      });
-
-      document.getElementById("songTitle").value = "";
-      document.getElementById("songChords").value = "";
-      document.getElementById("songRef").value = "";
-      loadSongs();
-    }
-
-    async function loadSongs() {
-      const q = query(collection(db, "songs"), where("uid", "==", currentUser.uid));
-      const snapshot = await getDocs(q);
-      const list = document.getElementById("songList");
-      list.innerHTML = "";
-      snapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-        const div = document.createElement("div");
-        div.className = "bg-white p-4 shadow rounded flex justify-between items-center";
-        div.innerHTML = `
-          <div>
-            <h3 class="font-bold">${data.title}</h3>
-            <p class="text-sm text-gray-600">${data.chords}</p>
-            <a href="${data.ref}" target="_blank" class="text-blue-500 text-sm">${data.ref}</a>
-          </div>
-          <button class="text-red-500" onclick="deleteSong('${docSnap.id}')">✕</button>
-        `;
-        list.appendChild(div);
-      });
-    }
-
-    window.deleteSong = async function (id) {
-      await deleteDoc(doc(db, "songs", id));
-      loadSongs();
-    };
-
-    window.signUp = signUp;
-    window.login = login;
-    window.logout = logout;
-    window.addSong = addSong;
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center p-6">
+<body class="bg-gray-100 min-h-screen flex flex-col items-center p-4">
 
-  <div id="loginSection" class="w-full max-w-sm mt-10 bg-white p-6 rounded shadow">
-    <h2 class="text-xl font-bold mb-4 text-center">Login / Sign Up</h2>
-    <input id="email" type="email" placeholder="Email" class="w-full mb-2 p-2 border rounded" />
-    <input id="password" type="password" placeholder="Password" class="w-full mb-4 p-2 border rounded" />
-    <div class="flex justify-between">
-      <button onclick="login()" class="bg-blue-500 text-white px-4 py-2 rounded">Login</button>
-      <button onclick="signUp()" class="bg-green-500 text-white px-4 py-2 rounded">Sign Up</button>
+  <div class="w-full max-w-3xl bg-white rounded-2xl shadow-lg p-6 mt-6">
+    <h1 class="text-2xl font-bold text-center text-amber-600 mb-6">ChordNotes 🎵</h1>
+
+    <div class="flex flex-col md:flex-row gap-3 mb-4">
+      <input id="songTitle" type="text" placeholder="Song title" class="flex-1 border border-gray-300 rounded-lg p-2" />
+      <input id="songChord" type="text" placeholder="Chord" class="flex-1 border border-gray-300 rounded-lg p-2" />
+      <input id="songLink" type="url" placeholder="Reference link / YouTube" class="flex-1 border border-gray-300 rounded-lg p-2" />
     </div>
+
+    <div class="flex justify-between items-center mb-6">
+      <label class="flex items-center space-x-2">
+        <input id="saveForever" type="checkbox" class="accent-amber-600">
+        <span class="text-sm text-gray-600">Save Forever (no expiration)</span>
+      </label>
+      <button id="addSong" class="bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-700">Add Song</button>
+    </div>
+
+    <div id="songList" class="space-y-3"></div>
+
+    <button id="clearSongs" class="mt-6 bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400">
+      Clear All Songs
+    </button>
   </div>
 
-  <div id="appSection" class="hidden w-full max-w-2xl mt-10">
-    <div class="flex justify-between items-center mb-4">
-      <h1 class="text-2xl font-bold">🎵 My Songs</h1>
-      <button onclick="logout()" class="text-sm text-red-500">Logout</button>
-    </div>
+  <script>
+    const STORAGE_KEY = 'chordnotes_data'
+    const EXPIRATION_HOURS = 24
 
-    <div class="bg-white p-4 rounded shadow mb-4">
-      <input id="songTitle" type="text" placeholder="Song title" class="w-full mb-2 p-2 border rounded" />
-      <input id="songChords" type="text" placeholder="Chords" class="w-full mb-2 p-2 border rounded" />
-      <input id="songRef" type="url" placeholder="YouTube or reference link" class="w-full mb-2 p-2 border rounded" />
-      <button onclick="addSong()" class="bg-blue-500 text-white px-4 py-2 rounded w-full">Add Song</button>
-    </div>
+    function setWithExpiry(key, value, ttlHours) {
+      const now = new Date()
+      const item = {
+        value: value,
+        expiry: now.getTime() + ttlHours * 60 * 60 * 1000
+      }
+      localStorage.setItem(key, JSON.stringify(item))
+    }
 
-    <div id="songList" class="flex flex-col gap-3"></div>
-  </div>
+    function getWithExpiry(key) {
+      const itemStr = localStorage.getItem(key)
+      if (!itemStr) return null
+      const item = JSON.parse(itemStr)
+      const now = new Date()
+      if (now.getTime() > item.expiry && !item.value.some(s => s.saveForever)) {
+        localStorage.removeItem(key)
+        return null
+      }
+      return item.value
+    }
 
+    let songs = getWithExpiry(STORAGE_KEY) || []
+    renderSongs(songs)
+
+    function saveSongs() {
+      setWithExpiry(STORAGE_KEY, songs, EXPIRATION_HOURS)
+    }
+
+    document.getElementById('addSong').addEventListener('click', () => {
+      const title = document.getElementById('songTitle').value.trim()
+      const chord = document.getElementById('songChord').value.trim()
+      const link = document.getElementById('songLink').value.trim()
+      const saveForever = document.getElementById('saveForever').checked
+
+      if (!title || !chord) return alert('Please enter both title and chord.')
+
+      songs.push({ title, chord, link, saveForever, notes: [] })
+      saveSongs()
+      renderSongs(songs)
+
+      document.getElementById('songTitle').value = ''
+      document.getElementById('songChord').value = ''
+      document.getElementById('songLink').value = ''
+      document.getElementById('saveForever').checked = false
+    })
+
+    document.getElementById('clearSongs').addEventListener('click', () => {
+      if (confirm('Clear all songs?')) {
+        songs = []
+        saveSongs()
+        renderSongs(songs)
+      }
+    })
+
+    function renderSongs(songs) {
+      const list = document.getElementById('songList')
+      list.innerHTML = ''
+      songs.forEach((song, index) => {
+        const div = document.createElement('div')
+        div.className = 'bg-amber-50 border border-amber-200 rounded-lg p-4'
+        div.dataset.index = index
+        div.innerHTML = `
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+            <div>
+              <h3 class="font-semibold text-lg">${song.title}</h3>
+              <p class="text-sm text-gray-600">Chord: <span class="font-medium">${song.chord}</span></p>
+              <a href="${song.link}" target="_blank" class="text-amber-600 underline text-sm">${song.link ? 'Reference' : ''}</a>
+              ${song.saveForever ? '<p class="text-xs text-green-600 mt-1">Saved Forever</p>' : ''}
+            </div>
+            <div class="flex gap-2 mt-2 md:mt-0">
+              <button class="addNote bg-amber-600 text-white px-3 py-1 rounded-lg">Add Note</button>
+              <button class="delete bg-red-500 text-white px-3 py-1 rounded-lg">Delete</button>
+            </div>
+          </div>
+          <div class="notes mt-3 space-y-2">
+            ${song.notes.map((note, i) => `
+              <div class="flex justify-between bg-white border rounded-lg p-2">
+                <p class="text-sm text-gray-700">${note}</p>
+                <button class="deleteNote text-red-500 text-xs" data-note="${i}">✕</button>
+              </div>
+            `).join('')}
+          </div>
+        `
+        list.appendChild(div)
+      })
+    }
+
+    document.getElementById('songList').addEventListener('click', e => {
+      const index = e.target.closest('[data-index]')?.dataset.index
+      if (e.target.classList.contains('delete')) {
+        songs.splice(index, 1)
+        saveSongs()
+        renderSongs(songs)
+      }
+      if (e.target.classList.contains('addNote')) {
+        const note = prompt('Enter a note for this song:')
+        if (note) {
+          songs[index].notes.push(note)
+          saveSongs()
+          renderSongs(songs)
+        }
+      }
+      if (e.target.classList.contains('deleteNote')) {
+        const noteIndex = e.target.dataset.note
+        songs[index].notes.splice(noteIndex, 1)
+        saveSongs()
+        renderSongs(songs)
+      }
+    })
+
+    new Sortable(document.getElementById('songList'), {
+      animation: 150,
+      onEnd: () => {
+        const reordered = Array.from(document.querySelectorAll('#songList > div')).map(div => {
+          const index = div.dataset.index
+          return songs[index]
+        })
+        songs = reordered
+        saveSongs()
+        renderSongs(songs)
+      }
+    })
+  </script>
 </body>
 </html>
